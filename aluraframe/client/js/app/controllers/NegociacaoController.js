@@ -22,6 +22,16 @@ class NegociacaoController
 			this._inputValor.value
 		);
 
+		this.cleanForm();
 		console.log(negociacao);
+		return negociacao;
+	}
+
+	cleanForm()
+	{
+		this._inputData.value = '';
+		this._inputQuantidade.value = '1';
+		this._inputValor.value = '0';
+		this._inputData.focus();
 	}
 }
