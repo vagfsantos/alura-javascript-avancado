@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Praticing</title>
+</head>
+<body>
+	
+
+	<script>
+		
+		var adiciona = e => {
+			let trans = e.target.result.transaction(['teste'], 'readwrite');
+			let store = trans.objectStore('teste');
+
+			let promise = store.add({obj: true});
+
+			promise.onsuccess = function(){
+				console.log('Dados salvos');
+			}
+
+			promise.onerror = function(){
+				console.log('Dados não foram salvos');
+			}
+		}
+
+
+		var listar = e => {
+			let trans = e.target.result.transaction(['teste'], 'readonly');
+			let store = trans.objectStore('teste');
+
+			store = store.openCursor();
+
+			store.onsuccess = e => {
+				if( !e.target.result ) return;
+
+				console.log(e.target.result.value);
+				e.target.result.continue();
+			}
+
+			store.onerror = e => {
+				console.log('Listagem falhou');
+				console.log(e);
+			}
+		}
+
+
+		var request = window.indexedDB.open('indexedTest', 2);
+
+		request.onsuccess = e => {
+			console.log('conecao criada com sucesso');
+			console.log(e);
+			adiciona(e);
+			listar(e);
+		}
+
+		request.onupgradeneeded = e => {
+			console.log('o banco foi atualizado');
+
+			e.target.result.createObjectStore('teste', {autoIncrement: true});
+		}
+
+		request.onerror = e => {
+			console.log('conexao falhou');
+			console.log(e);
+		}
+
+
+		
+
+	</script>
+
+
+</body>
+</html>
