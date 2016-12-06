@@ -57,4 +57,49 @@ class NegociacaoService
 			})
 		});
     }
+
+    cadastra(negociacao)
+    {
+    	return ConnectionFactory.getConnection()
+    		.then(connection => new NegociacaoDao(connection))
+    		.then( dao => dao.adiciona( negociacao ) )
+    		.then( () => 'Negociacao adicionada com sucesso' )
+    		.catch( () => 'Erro ao salvar os dados' )
+    }
+
+    lista()
+    {
+    	return ConnectionFactory.getConnection()
+    		.then(connection => new NegociacaoDao(connection))
+    		.then( dao => dao.listaTodos() )
+    		.catch( erro => {
+    			console.log('Não foi possível listar as negociações');
+    			throw new Error('Não foi possível listar as negociações');
+    		});
+    }
+
+    apaga()
+    {
+    	return ConnectionFactory.getConnection()
+    		.then(connection => new NegociacaoDao(connection))
+    		.then( dao => dao.apagaTodos() )
+    		.catch( erro => {
+    			console.log('Não foi possível apagar as negociações');
+    			throw new Error('Não foi possível apagar as negociações');
+    		});
+    }
+
+    importa(listaAtual)
+    {
+    	return this.obterNegociacoes()
+	    		.then( negociacoes => 
+	    			negociacoes.filter( negociacao => 
+	    				!listaAtual.some( negociacaoExistente => negociacao.isEqual(negociacaoExistente) )
+	    			)
+	    		)
+	    		.catch( erro => {
+	    			console.log(erro);
+	    			throw new Error('Não foi possível buscar as engociações')
+	    		})
+    }
 }
